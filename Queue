@@ -1,0 +1,69 @@
+public class Queue {
+	
+	private PCB[] arr;
+	private int front;
+	private int rear;
+	private int capacity;
+	private int size;
+	
+	public Queue (){
+		arr = new PCB[30];
+        capacity = 30;
+        front = 0;
+        rear = -1;
+        size = 0;
+	}
+	
+	public PCB peek() { // retrive first element in queue without delete it
+        if (isEmpty()) {
+            return null;
+        }
+        return arr[front];
+    }
+	
+	public boolean enqueue(PCB process) {
+        if (isFull()) {
+            System.out.println("Queue is full");
+            return false;
+        }
+        rear = (rear + 1) % capacity;
+        arr[rear] = process;
+        size++;
+        return true;
+    }
+    
+    // Remove and return the element from the front of the queue
+    public PCB dequeue() {
+        if (isEmpty()) {
+            return null;
+        }
+        PCB removedItem = arr[front];
+        front = (front + 1) % capacity;
+        size--;
+        return removedItem;
+    }
+    
+    // Check if the queue is empty
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    
+    // Check if the queue is full
+    public boolean isFull() {
+        return size == capacity;
+    }
+    
+    public void printQueue() {
+    	if(isEmpty())
+    		return;
+    	int counter=front;
+    	System.out.println("***---------------------------------------***");
+    	while(counter%capacity != rear) {
+    		System.out.println(arr[counter].toString());
+    		counter++;
+    	}
+    	System.out.println(arr[counter].toString());
+    	System.out.println("***---------------------------------------***");
+    }
+
+}
