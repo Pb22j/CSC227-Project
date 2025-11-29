@@ -1,0 +1,31 @@
+
+public class ReadyLoaderThread implements Runnable {
+	
+	private Queue jobQueue;
+	private ReadyQueue readyQueue;
+	
+	public ReadyLoaderThread(Queue job , ReadyQueue ready) {
+		jobQueue=job;
+		readyQueue=ready;
+		readyQueue.setLock(false);
+	}
+	public ReadyLoaderThread(Queue job) {
+		jobQueue=job;
+		readyQueue= new ReadyQueue();
+		readyQueue.setLock(false);
+	}
+	
+	public void run() {
+		while(!jobQueue.isEmpty()) {
+			while(!readyQueue.isLock()) {
+				PCB testPCB = jobQueue.peek();
+				if(readyQueue.enqueue(testPCB)) {
+					jobQueue.dequeue();
+					testPCB.setState("ready");
+				}
+			}
+
+		}
+	}
+	
+}
