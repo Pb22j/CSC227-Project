@@ -1,4 +1,4 @@
-public class Procces {
+public class Procces {\\
     private int PID;
     private int BrustTime;
     private int Priority;
