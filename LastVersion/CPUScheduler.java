@@ -98,12 +98,28 @@ public class CPUScheduler {
             }
             
             // Starvation Check
+            /*
             for (PCB p : availableProcesses) {
                 if (executedCount > p.getDegreeOfMultiprogramming()) {
                     p.setHasStarved(true);
                     System.out.println("Process P" + p.getPID() + " suffered from STARVATION!");
                 }
             }
+            */
+
+            for (PCB p : availableProcesses) {
+            int waitingTime = time - p.getReadyQueueArrivalTime();
+            
+            if (waitingTime > p.getDegreeOfMultiprogramming()) {
+                if (!p.hasStarved()) {
+                    p.setHasStarved(true);
+                    System.out.println("Process P" + p.getPID() + " suffered from STARVATION! " +
+                                     "(Waited " + waitingTime + "ms, DOM was " + 
+                                     p.getDegreeOfMultiprogramming() + ")");
+                }
+            }
+        }
+
             
             PCB currentPCB = Collections.min(availableProcesses, 
                 (p1, p2) -> {
@@ -174,15 +190,33 @@ public class CPUScheduler {
             // Aging & Starvation
             for (PCB p : availableProcesses) { 
                 p.setProcessesExecutedSinceArrival(executedCount);
-                
+               /* 
                 if (p.getReadyQueueArrivalTime() > p.getDegreeOfMultiprogramming()) {
                     if (!p.hasStarved()) {
                         p.setHasStarved(true);
                         System.out.println("Process P" + p.getPID() + " is STARVING!");
                     }
-                    
+                 
+
+                
                     p.setPriority(Math.min(128, p.getPriority() + 1));
                 }
+                */ 
+
+                int waitingTime = currentTime - p.getReadyQueueArrivalTime();
+
+// Check starvation condition
+            if (waitingTime > p.getDegreeOfMultiprogramming()) {
+                if (!p.hasStarved()) {
+                    p.setHasStarved(true);
+                    System.out.println("Process P" + p.getPID() + " suffered from STARVATION!");
+                    
+                    // Only apply aging for Priority Scheduling
+                    if (usingPriorityScheduling) {
+                        p.setPriority(Math.min(128, p.getPriority() + 1));
+                    }
+                }
+            }
             }
             
             PCB currentPCB = Collections.max(availableProcesses, 
@@ -288,4 +322,5 @@ public class CPUScheduler {
         System.out.printf("Average Turnaround Time: %.2f ms%n", totalTurnaround / count);
         System.out.println("=".repeat(80));
     }
+
 }
